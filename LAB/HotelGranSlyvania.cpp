@@ -162,7 +162,70 @@ void createBooking(){
     scanf("%d", &stayDuration);
 }
 
-int main(){
+bool viewBooking(){
+    bool found = false;
+    for(int i = 0; i < HASH_SIZE; i++){
+        struct Booking *curr = bookings[i];
+        while(curr){
+            printf("Booking ID: %s\n", curr->bookingID);
+            curr = curr->next;
+            found = true;
+        }
+    }
+    if(!found){
+        puts("Not found");
+    }
+    return found;
+}
 
+bool pop(char *bookingID){
+    int hash = getHashKey(bookingID);
+    struct Booking *curr = bookings[hash];
+    if(strcmp(curr->bookingID, bookingID) == 0){
+        bookings[hash] = curr->next;
+        free(curr);
+    } else {
+        while(curr->next){
+            if(strcmp(curr->next->bookingID, bookingID) == 0){
+                struct Booking *temp = curr->next;
+                curr->next = temp->next;
+                free(temp);
+                return true;
+            }
+            curr = curr->next;
+        }
+    }
+    return false;
+}
+
+void deleteBooking(){
+    if(!viewBooking()){
+        return;
+    }
+
+    char bookingID[7];
+    printf("Input Booking ID: ");
+    scanf("%[^\n]", bookingID);
+    pop(bookingID);
+}
+
+int main(){
+    srand(time(NULL));
+    int menu = 0;
+    do{
+        puts("1. Insert");
+        puts("2. View");
+        puts("3. Delete");
+        puts("4. Exit");
+        scanf("%d", &menu); getch
+        switch (menu){
+        case 1:
+            createBooking();
+            break;
+        case 2:
+            viewBooking();
+            break;
+        }
+    }while(menu != 4);
     return 0;
 }
