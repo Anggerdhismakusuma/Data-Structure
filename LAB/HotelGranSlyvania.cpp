@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define HASH_SIZE 100
-#define getch while(getchar()!='\n')
+#define getch while(getchar()!='\n');
 // define satu variable global buat ukuran hash nya
 
 struct Booking{
@@ -15,6 +15,14 @@ struct Booking{
     char bookingID[7];
     struct Booking *next;
 }*bookings[HASH_SIZE];
+
+int getHashKey(char *id){
+    int x = 0;
+    for(int i = 2; i < 5; i++){
+        x += id[i] - '0';
+    }
+    return (x -1) % HASH_SIZE;
+}
 
 bool validFullName(char *fullname){
     int len = strlen(fullname);
@@ -44,6 +52,91 @@ bool validRoomType(char* roomType){
 bool validStayDuration(int stayDuration){
     return 1 <= stayDuration && stayDuration <= 30;
 }
+
+void book(){
+	char name[30];
+	char number[15];
+	char type[10];
+	int dur;
+	int age;
+	
+	do{
+		printf("Input Name: ");
+		scanf("%[^\n]", name); getch
+	}while(!validFullName);
+	
+	do{
+		printf("Input Number: ");
+		scanf("%[^\n]", number); getch
+	}while(!validPhoneNumber);
+	
+	do{
+		printf("Input Age: ");
+		scanf("%d", &age); getch
+	}while(age < 18);
+	
+	do{
+		printf("Input Roomtype: ");
+		scanf("%[^\n]", type);getch
+	}while(strcmp(type, "Regular") != 0 &&
+		strcmp(type, "Deluxe") != 0 &&
+		strcmp(type, "Suite") != 0);	
+	do{
+		printf("Input Duration: ");
+		scanf("%d", &dur);getch
+	}while(dur < 1 || dur > 30);
+
+    pushTail(newBooking(name, number, age, type, dur));
+}
+
+char toUpper(char x){
+    return 'a' < x && x <= 'z' ? x - ('a'-'A') : x;
+}
+
+char* generateID(char* roomType){
+    // rand() % (max - min) + min
+    char* id = (char*)malloc(sizeof(char)*7);
+    for(int i = 0; i < 5; i++){
+        id[i] = i < 2 ? toUpper(roomType[i]) : rand() % 10 + '0';
+    }
+    id[5] = '\0';
+}
+
+struct Booking* newBooking(char *fullName, char *phoneNumber, int age, char *roomType, int stayDuration){
+    char *bookingID = generateID(roomType);
+    struct Booking* curr = (struct Booking*)malloc(sizeof(struct Booking));
+    strcpy(curr->fullname, fullName);
+    strcpy(curr->phoneNumber, phoneNumber);
+    curr->age = age;
+    strcpy(curr->roomType, roomType);
+    curr->stayDuration = stayDuration;
+    strcpy(curr->bookingID, bookingID);
+
+    curr->next = NULL;
+
+    return curr;
+}
+
+void pushHead(struct Booking* newData){
+    int hash = getHashKey(newData->bookingID);
+    struct Booking* curr = bookings[hash];
+    newData->next = curr;
+    bookings[hash] = newData;
+}
+
+void pushTail(struct Booking* newData){
+    int hash = getHashKey(newData->bookingID);
+    if(bookings[hash] == NULL){
+        bookings[hash] = newData;
+    } else {
+        struct Booking* curr = bookings[hash];
+        while(curr->next){
+            curr = curr->next;
+        }
+        curr->next = newData;
+    }
+}
+
 
 void createBooking(){
     char fullname[35];
