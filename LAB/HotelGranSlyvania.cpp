@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define HASH_SIZE 100
 #define getch while(getchar()!='\n');
