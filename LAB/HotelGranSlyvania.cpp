@@ -33,6 +33,18 @@ bool validPhoneNumber(char *phoneNumber){
     return space >= 1 && len - (space + 3) == 11;
 }
 
+bool validAge(int age){
+    return age >= 18;
+}
+
+bool validRoomType(char* roomType){
+    return strcmp(roomType, "Deluxe") == 0 || strcmp(roomType, "Regular") == 0 || strcmp(roomType, "Suite") == 0;
+}
+
+bool validStayDuration(int stayDuration){
+    return 1 <= stayDuration && stayDuration <= 30;
+}
+
 void createBooking(){
     char fullname[35];
     char phoneNumber[20];
