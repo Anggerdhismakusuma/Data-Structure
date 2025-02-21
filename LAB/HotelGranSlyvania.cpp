@@ -219,12 +219,17 @@ int main(){
         puts("4. Exit");
         scanf("%d", &menu); getch
         switch (menu){
-        case 1:
-            createBooking();
-            break;
-        case 2:
-            viewBooking();
-            break;
+            case 1:
+                createBooking();
+                break;
+            case 2:
+                viewBooking();
+                break;
+            case 3:
+                deleteBooking();
+                break;
+            case 4:
+                return 0;
         }
     }while(menu != 4);
     return 0;
