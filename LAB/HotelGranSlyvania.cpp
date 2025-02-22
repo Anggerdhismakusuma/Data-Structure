@@ -55,20 +55,21 @@ bool validStayDuration(int stayDuration){
 }
 
 void book(){
-	char name[30];
-	char number[15];
-	char type[10];
-	int dur;
-	int age;
+	char fullname[35];
+    char phoneNumber[20];
+    int age;
+    char roomType[10];
+    int stayDuration;
+    char bookingID[7];
 	
 	do{
 		printf("Input Name: ");
-		scanf("%[^\n]", name); getch
+		scanf("%[^\n]", fullname); getch
 	}while(!validFullName);
 	
 	do{
 		printf("Input Number: ");
-		scanf("%[^\n]", number); getch
+		scanf("%[^\n]", phoneNumber); getch
 	}while(!validPhoneNumber);
 	
 	do{
@@ -78,16 +79,16 @@ void book(){
 	
 	do{
 		printf("Input Roomtype: ");
-		scanf("%[^\n]", type);getch
-	}while(strcmp(type, "Regular") != 0 &&
-		strcmp(type, "Deluxe") != 0 &&
-		strcmp(type, "Suite") != 0);	
+		scanf("%[^\n]", roomType); getch
+	}while(strcmp(roomType, "Regular") != 0 &&
+		strcmp(roomType, "Deluxe") != 0 &&
+		strcmp(roomType, "Suite") != 0);	
 	do{
 		printf("Input Duration: ");
-		scanf("%d", &dur);getch
-	}while(dur < 1 || dur > 30);
+		scanf("%d", &stayDuration);getch
+	}while(stayDuration < 1 || stayDuration > 30);
 
-    pushTail(newBooking(name, number, age, type, dur));
+    pushTail(newBooking(fullname, phoneNumber, age, roomType, stayDuration));
 }
 
 char toUpper(char x){
