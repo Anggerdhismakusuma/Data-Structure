@@ -95,7 +95,7 @@ void pushTail(struct Booking* newData){
     }
 }
 
-void book(){
+void createBooking(){
 	char fullname[35];
     char phoneNumber[20];
     int age;
@@ -139,28 +139,28 @@ void pushHead(struct Booking* newData){
     bookings[hash] = newData;
 }
 
-void createBooking(){
-    char fullname[35];
-    char phoneNumber[20];
-    int age;
-    char roomType[10];
-    int stayDuration;
+// void createBooking(){
+//     char fullname[35];
+//     char phoneNumber[20];
+//     int age;
+//     char roomType[10];
+//     int stayDuration;
 
-    printf("Input Name:");
-    scanf("%[^\n]", fullname);
+//     printf("Input Name: ");
+//     scanf("%[^\n]", fullname);
     
-    printf("Input Phone Number:");
-    scanf("%[^\n]", phoneNumber);
+//     printf("Input Phone Number: ");
+//     scanf("%[^\n]", phoneNumber);
     
-    printf("Input Age:");
-    scanf("%d", &age);
+//     printf("Input Age: ");
+//     scanf("%d", &age);
     
-    printf("Input Room Type:");
-    scanf("%[^\n]", roomType);
+//     printf("Input Room Type: ");
+//     scanf("%[^\n]", roomType);
     
-    printf("Input Stay Duration:");
-    scanf("%d", &stayDuration);
-}
+//     printf("Input Stay Duration: ");
+//     scanf("%d", &stayDuration);
+// }
 
 bool viewBooking(){
     bool found = false;
