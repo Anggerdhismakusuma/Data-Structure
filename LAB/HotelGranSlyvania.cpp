@@ -54,6 +54,47 @@ bool validStayDuration(int stayDuration){
     return 1 <= stayDuration && stayDuration <= 30;
 }
 
+char toUpper(char x){
+    return 'a' < x && x <= 'z' ? x - ('a'-'A') : x;
+}
+
+char* generateID(char* roomType){
+    // rand() % (max - min) + min
+    char* id = (char*)malloc(sizeof(char)*7);
+    for(int i = 0; i < 5; i++){
+        id[i] = i < 2 ? toUpper(roomType[i]) : rand() % 10 + '0';
+    }
+    id[5] = '\0';
+}
+
+struct Booking* newBooking(char *fullName, char *phoneNumber, int age, char *roomType, int stayDuration){
+    char *bookingID = generateID(roomType);
+    struct Booking* curr = (struct Booking*)malloc(sizeof(struct Booking));
+    strcpy(curr->fullname, fullName);
+    strcpy(curr->phoneNumber, phoneNumber);
+    curr->age = age;
+    strcpy(curr->roomType, roomType);
+    curr->stayDuration = stayDuration;
+    strcpy(curr->bookingID, bookingID);
+
+    curr->next = NULL;
+
+    return curr;
+}
+
+void pushTail(struct Booking* newData){
+    int hash = getHashKey(newData->bookingID);
+    if(bookings[hash] == NULL){
+        bookings[hash] = newData;
+    } else {
+        struct Booking* curr = bookings[hash];
+        while(curr->next){
+            curr = curr->next;
+        }
+        curr->next = newData;
+    }
+}
+
 void book(){
 	char fullname[35];
     char phoneNumber[20];
@@ -91,54 +132,12 @@ void book(){
     pushTail(newBooking(fullname, phoneNumber, age, roomType, stayDuration));
 }
 
-char toUpper(char x){
-    return 'a' < x && x <= 'z' ? x - ('a'-'A') : x;
-}
-
-char* generateID(char* roomType){
-    // rand() % (max - min) + min
-    char* id = (char*)malloc(sizeof(char)*7);
-    for(int i = 0; i < 5; i++){
-        id[i] = i < 2 ? toUpper(roomType[i]) : rand() % 10 + '0';
-    }
-    id[5] = '\0';
-}
-
-struct Booking* newBooking(char *fullName, char *phoneNumber, int age, char *roomType, int stayDuration){
-    char *bookingID = generateID(roomType);
-    struct Booking* curr = (struct Booking*)malloc(sizeof(struct Booking));
-    strcpy(curr->fullname, fullName);
-    strcpy(curr->phoneNumber, phoneNumber);
-    curr->age = age;
-    strcpy(curr->roomType, roomType);
-    curr->stayDuration = stayDuration;
-    strcpy(curr->bookingID, bookingID);
-
-    curr->next = NULL;
-
-    return curr;
-}
-
 void pushHead(struct Booking* newData){
     int hash = getHashKey(newData->bookingID);
     struct Booking* curr = bookings[hash];
     newData->next = curr;
     bookings[hash] = newData;
 }
-
-void pushTail(struct Booking* newData){
-    int hash = getHashKey(newData->bookingID);
-    if(bookings[hash] == NULL){
-        bookings[hash] = newData;
-    } else {
-        struct Booking* curr = bookings[hash];
-        while(curr->next){
-            curr = curr->next;
-        }
-        curr->next = newData;
-    }
-}
-
 
 void createBooking(){
     char fullname[35];
