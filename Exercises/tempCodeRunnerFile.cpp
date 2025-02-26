@@ -1,20 +1,3 @@
-1
-Rizki
-33
-3
-1
-Richard
-26
-3
-1
-Andi
-16
-1
-1
-Nur
-74
-2
-1
-Coki
-66
-3
+
+    // process();
+    // display();
