@@ -75,7 +75,6 @@ void process() {
 }
 
 int main(){
-
     enqueue(3001, 0, 0);
     enqueue(3002, 1, 1);
     enqueue(3003, 1, 0);
