@@ -119,6 +119,7 @@ void remove(int num) {
     view();
 }
 
+
 void call() {
     if (h == NULL) return;
     for (int i = 0; i < 4; i++) {

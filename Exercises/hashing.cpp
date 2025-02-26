@@ -4,13 +4,11 @@
 
 #define TABLE_SIZE 10
 
-
 typedef struct {
     char *key;
     int value;
     int filled; 
 } Entry;
-
 
 typedef struct {
     Entry table[TABLE_SIZE];
@@ -42,7 +40,7 @@ int hash_digit_extraction(const char *key) {
     int hash = 0;
     int i;
     for (i = 0; key[i] != '\0'; i++) {
-        if (isdigit(key[i])) {
+        if (isDigit(key[i])) {
             hash += key[i] - '0';
         }
     }
