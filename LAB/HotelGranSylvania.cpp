@@ -19,7 +19,7 @@ struct Booking {
 
 // Main Menu Functions
 void printMenu() {
-    system("clear");
+    system("cls");
     puts("+--------------------+");
     puts("| Hotel GrAnsylvania |");
     puts("+--------------------+");
@@ -138,7 +138,7 @@ bool validStayDuration(int stayDuration) {
 
 // Main Function
 void createBooking() {
-    system("clear");
+    system("cls");
     char name[35];
     char phoneNum[20];
     int age;
@@ -183,7 +183,7 @@ void createBooking() {
     Booking* c = newBooking(name, phoneNum, age, roomType, stayDuration);
     pushTail(c);
 
-    system("clear");
+    system("cls");
 
     
     // +=================================+
@@ -207,7 +207,7 @@ void createBooking() {
 }
 
 bool viewBooking() {
-    system("clear");
+    system("cls");
     bool found = false;
 
     for (int i = 0; i < HASH_SIZE; i++) {
@@ -240,7 +240,7 @@ void deleteBooking() {
     printf("Input Booking ID (Case Sensitive) : ");
     scanf("%[^\n]", bookingID); gc
 
-    system("clear");
+    system("cls");
     if(pop(bookingID)) {
         printf("BookingID %s is Successfully Deleted !\n", bookingID);
     } else {
