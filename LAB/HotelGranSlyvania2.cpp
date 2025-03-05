@@ -2,176 +2,279 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #define HASH_SIZE 100
-#define getch while(getchar() != '\n');
-#define cls for(int i = 0; i < 30; i++) puts("");
+#define gc getchar();
 
-struct Booking{
-    char fullname[35];
-    char phonenumber[20];
+struct Booking {
+    char name[35];
+    char phoneNum[20];
     int age;
     char roomType[10];
     int stayDuration;
     char bookingID[7];
-    struct Booking *next;
-} *bookings[HASH_SIZE];
+    Booking* next;
+}*bookings[HASH_SIZE];
 
-char toUpper(char x){
-    return 'a' <= x && x <= 'z' ? x - ('a' - 'A') : x;
+// Main Menu Functions
+void printMenu() {
+    system("cls");
+    puts("+--------------------+");
+    puts("| Hotel GrAnsylvania |");
+    puts("+--------------------+");
+    puts("");
+    puts("1. Booking Hotel");
+    puts("2. View Bookings");
+    puts("3. Delete Bookings");
+    puts("4. Exit");
 }
 
-char *createID(char *roomType){
-    char *temp = (char*)malloc(sizeof(char)*7);
-    for(int i = 0; i < 5; i++){
-        temp[i] = i < 2 ? toUpper(roomType[i]) : rand()%10 + '\0';
-    }
-    temp[5] = '\0';
-    return temp;
+void enterToContinue() {
+    printf("Press ENTER To Continue..."); gc
 }
 
-struct Booking* newBooking(char *fullname, char* phonenumber, int age, char *roomType, int stayDuration){
-    char *bookingID = createID(roomType);
-
-    struct Booking *curr = (struct Booking*)malloc(sizeof(Booking));
-    strcpy(curr->fullname, fullname);
-    strcpy(curr->phonenumber, phonenumber);
-    curr->age = age;
-    strcpy(curr->roomType, roomType);
-    strcpy(curr->bookingID, bookingID);
-    curr->stayDuration = stayDuration;
-    curr->next = NULL;
-
-    return curr;
-}
-
-int hashKey(char *id){
+// Hashing Function
+int getHashKey(char* id) {
     int x = 0;
-    for (int i = 0; i < 5; i++){
+    for (int i = 2; i < 5; i++) {
         x += id[i] - '0';
     }
-    return (x-1) % HASH_SIZE;
+
+    return (x - 1) % HASH_SIZE;
 }
 
-bool validFullName(char *fullname){
-    int len = strlen(fullname);
-    return 3 <= len && len <= 30;
+char* generateID(char* roomType) {
+    char* id = (char*)malloc(sizeof(char) * 7);
+    sprintf(id, "%c%c%d%d%d", toupper(roomType[0]), toupper(roomType[1]), rand() % 10, rand() % 10, rand() % 10);
+    return id;
 }
 
-bool validPhoneNumber(char *phonenumber){
-    if(phonenumber[0] != '+' || phonenumber[0] != '6' || phonenumber[0] != '2'){
-        return false;
-    }
+// Chaining Functions
+Booking *newBooking(char* name, char* phoneNum, int age, char* roomType, int stayDuration) {
+    char* bookingID = generateID(roomType);
 
-    int space = 0;
-    int len = strlen(phonenumber);
-    for(int i = 2; i < len; i++){
-        if(phonenumber[i] == ' '){
-            space++;
+    Booking* c = (Booking*)malloc(sizeof(Booking));
+    strcpy(c->name, name);
+    strcpy(c->phoneNum, phoneNum);
+    c->age = age;
+    strcpy(c->roomType, roomType);
+    c->stayDuration = stayDuration;
+    strcpy(c->bookingID, bookingID);
+    c->next = NULL;
+
+    return c;
+}
+
+void pushTail(Booking *c) {
+    int key = getHashKey(c->bookingID);
+
+    if (bookings[key] == NULL) {
+        bookings[key] = c;
+    } else {
+        Booking* temp = bookings[key];
+
+        while (temp->next != NULL) {
+            temp = temp->next;
         }
+        temp->next = c;
     }
-    return space >= 1 && (len-space-3) == 11;
 }
 
-bool validAge(int age){
+bool pop(char* bookingID) {
+    int key = getHashKey(bookingID);
+
+    Booking* c = bookings[key];
+
+    if (c == NULL) return false;
+
+    if (strcmp(c->bookingID, bookingID) == 0) {
+        bookings[key] = NULL;
+        free(c);
+        return true;
+    } else {
+        Booking* temp = bookings[key];
+        while (temp->next != NULL && strcmp(temp->next->bookingID, bookingID) != 0) {
+            temp = temp->next;
+        }
+        Booking* toPop = temp->next;
+        temp->next = toPop->next;
+        free(toPop);
+        return true;
+    }
+    return false;
+}
+
+// Validation Functions
+bool validName(char* name) {
+    int l = strlen(name);
+    return l >= 3 && l <= 30;
+}
+
+bool validPhoneNum(char* phoneNum) {
+    if (phoneNum[0] != '+' || phoneNum[1] != '6' || phoneNum[2] != '2') return false;
+    
+    int space = 0;
+    int l = strlen(phoneNum);
+    
+    for (int i = 3; i < l; i++) {
+        if (phoneNum[i] == ' ') space++;
+    }
+    
+    return space >= 1 && l - (space + 3) == 11;
+}
+
+bool validAge(int age) {
     return age >= 18;
 }
 
-bool validRoomType(char *roomtype){
-    return strcmp(roomtype, "Regular") == 0 || strcmp(roomtype, "Deluxe") == 0 || strcmp(roomtype, "Suite") == 0;
+bool validRoomType(char* roomType) {
+    return strcmp(roomType, "Regular") == 0 || strcmp(roomType, "Deluxe") == 0 || strcmp(roomType, "Suite") == 0;
 }
 
-bool validDuration(int stayDuration){
-    return 1 <= stayDuration && stayDuration <= 30;
+bool validStayDuration(int stayDuration) {
+    return stayDuration >= 1 && stayDuration <= 30;
 }
 
-void pushTail(struct Booking* newData){
-    int hash = hashKey(newData->bookingID);
-
-    if(bookings[hash] == NULL){
-        bookings[hash] = newData;
-    } else {
-        struct Booking* curr = bookings[hash];
-        while(curr->next){
-            curr = curr->next;
-        }
-        curr->next = newData;
-    }
-}
-
-void createBooking(){
-    char fullname[35];
-    char phonenumber[20];
+// Main Function
+void createBooking() {
+    system("cls");
+    char name[35];
+    char phoneNum[20];
     int age;
     char roomType[10];
     int stayDuration;
-    char bookingID[7];
 
-    do{
+    do {
         printf("Input Full Name [3..30] : ");
-        scanf("%[^\n]", fullname); getch
-    } while(!validFullName(fullname));
+        scanf("%[^\n]", name); gc
 
-    do{
+        if (!validName(name)) puts("Full name length must be between 3 and 30");
+    } while (!validName(name));
+
+    do {
         printf("Input Phone Number : ");
-        scanf("%[^\n]", phonenumber); getch
-    } while(!validPhoneNumber(phonenumber));
+        scanf("%[^\n]", phoneNum); gc
 
-    do{
-        printf("Input Age [Min. 18] : ");
-        scanf("%d", &age); getch
-    } while(!validAge(age));
+        if (!validPhoneNum(phoneNum)) puts("Phone number must be begin with '+62', contains with at least 1 space and the length must be 11 (Exclude +62 and space)");
+    } while (!validPhoneNum(phoneNum));
 
-    do{
-        printf("Input room type [Regular|Deluxe|Suite] : ");
-        scanf("%s", roomType); getch
-    }while(!validRoomType(roomType));
+    do {
+        printf("Input Age [Minimum 18] : ");
+        scanf("%d", &age); gc
 
-    do{
-        printf("Input stay duration [1..30] : ");
-        scanf("%d", &stayDuration); getch
-    }while(!validDuration(stayDuration));
+        if (!validAge(age)) puts("Age must be minimum 18");
+    } while (!validAge(age));
 
-    pushTail(newBooking(fullname, phonenumber, age, roomType, stayDuration));
+    do {
+        printf("Input Room Type [Regular | Deluxe | Suite] (Case Sensitive) : ");
+        scanf("%[^\n]", roomType); gc
+
+        if (!validRoomType(roomType)) puts("Room type must be either Regular or Deluxe or Suite (Case Sensitive)");
+    } while (!validRoomType(roomType));
+
+    do {
+        printf("Input How Many Night You Will Stay [1..30] : ");
+        scanf("%d", &stayDuration); gc
+
+        if (!validStayDuration(stayDuration)) puts("You can't stay less than 1 night or more than 30 nights");
+    } while (!validStayDuration(stayDuration));
+    
+    Booking* c = newBooking(name, phoneNum, age, roomType, stayDuration);
+    pushTail(c);
+
+    system("cls");
+
+    
+    // +=================================+
+    // | Booking ID    : RE073           |
+    // +=================================+
+    // | Full Name     : Angger          |
+    // | Phone Number  : +62 89542400095 |
+    // | Room Type     : Regular         |
+    // | Night Stay    : 1 night(s)      |
+    // +=================================+
+    printf("+=================================+\n");
+    printf("| Booking ID    : %10s           |\n", c->bookingID);
+    printf("+=================================+\n");
+    printf("| Full Name     : %10s           |\n", c->name);
+    printf("| Phone Number  : %10s           |\n", c->phoneNum);
+    printf("| Room Type     : %10s           |\n", c->roomType);
+    printf("| Night Stay    : %d night(s)     |\n", c->stayDuration);
+    printf("+=================================+\n");
+
+    enterToContinue();
 }
 
-bool viewBooking(){
+bool viewBooking() {
+    system("cls");
     bool found = false;
-    for(int i = 0; i < HASH_SIZE; i++){
-        struct Booking* curr = bookings[i];
-        while(curr){
-            printf("Booking ID %s\n", curr->bookingID);
-            printf("======================\n");
-            printf("Full Name: %s\n", curr->fullname);
-            printf("Phone Number : %s\n", curr->phonenumber);
-            printf("Room Type : %s\n", curr->roomType);
-            printf("Stay Duration : %d\n\n", curr->stayDuration);
-            curr = curr->next;
+
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Booking* temp = bookings[i];
+        while (temp != NULL) {
             found = true;
+            printf("Booking ID = %s\n", temp->bookingID);
+            puts("==================");
+            printf("Full Name : %s\n", temp->name);
+            printf("Phone Number : %s\n", temp->phoneNum);
+            printf("Room Type : %s\n", temp->roomType);
+            printf("Night Stay : %d night(s)\n", temp->stayDuration);
+            puts("");
+            puts("=========================");
+            puts("");
+
+            temp = temp->next;
         }
     }
+    if (!found) puts("There is no booking !");
 
-    if(!found){
-        printf("No Booking Found!!\n");
-    }
+    enterToContinue();
     return found;
 }
 
-bool popBooking(char *bookingID){
-    int hash = hashKey(bookingID);
+void deleteBooking() {
+    if(!viewBooking()) return;
 
-    struct Booking* curr = bookings[hash];
-    if(curr != NULL){
-        if(strcmp(curr->bookingID, bookingID) == 0){
-            bookings[hash] = curr->next;
-            free(curr);
-            return true;
-        } else {
-            while(curr->next){
-                if(){
-                    
-                }
-            }
-        }
+    char bookingID[100];
+    printf("Input Booking ID (Case Sensitive) : ");
+    scanf("%[^\n]", bookingID); gc
+
+    system("cls");
+    if(pop(bookingID)) {
+        printf("BookingID %s is Successfully Deleted !\n", bookingID);
+    } else {
+        puts("Failed to Delete, There is No Data !");
     }
+
+    enterToContinue();
+}
+
+int main() {
+    srand(time(NULL));
+    do {
+        int inp = -1;
+        printMenu();
+        
+        do {
+            printf(">> ");
+            scanf("%d", &inp); gc
+        } while (inp < 1 || inp > 4);
+        
+        switch(inp) {
+            case 1 :
+                createBooking();
+                break;
+            case 2 :
+                viewBooking();
+                break;
+            case 3 :
+                deleteBooking();
+                break;
+            case 4 :
+                enterToContinue();
+                return 0;
+        }
+    } while (1);
+    return 0;
 }

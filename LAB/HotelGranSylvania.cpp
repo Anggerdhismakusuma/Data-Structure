@@ -189,7 +189,7 @@ void createBooking() {
     // +=================================+
     // | Booking ID    : RE073           |
     // +=================================+
-    // | Full Name     : Angge           |
+    // | Full Name     : Angger          |
     // | Phone Number  : +62 89542400095 |
     // | Room Type     : Regular         |
     // | Night Stay    : 1 night(s)      |
