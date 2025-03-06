@@ -59,7 +59,7 @@ int generateKey(char *id){
 
 	char stringID[100];
 	sprintf(stringID, "%lld", numID);
-	int l = strlen(stringID);
+	int l = strlen(stringID);	
 	int key = 0;
 	if(l % 2 == 0){
 		char mid[3] = {stringID[l / 2 - 1], stringID[l / 2], '\0'};
@@ -72,7 +72,7 @@ int generateKey(char *id){
 }
 
 void push(Borrower *c){
-	int key = getHashKey(c->borrowingID);
+	int key = generateKey(c->borrowingID);
 	if(hashTable[key] == NULL){
 		hashTable[key] = c;
 	} else {
