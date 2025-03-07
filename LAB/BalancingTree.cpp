@@ -43,6 +43,37 @@ int getBalance(Mahasiswa *curr){
     }
 }
 
+Mahasiswa *rightRotate(Mahasiswa *curr){
+    Mahasiswa *currLeft = curr->left;
+    Mahasiswa *currLeftRight = curr->left->right;
+
+    // Rotate
+    currLeft->left->right = curr;
+    curr->left = currLeftRight;
+
+    // Update height
+    curr->height = 1 + max(getHeight(curr->left), getHeight(curr->right));
+    currLeft->height = 1 + max(getHeight(currLeft->left), getHeight(currLeft->right));
+
+    return currLeft; 
+}
+
+Mahasiswa *leftRotate(Mahasiswa *curr){
+    Mahasiswa *currRight = curr->right;
+    Mahasiswa *currRightLeft = curr->right->left;
+
+    // Rotate
+    currRight->left = curr;
+    curr->right = currRightLeft;
+
+    // Update height
+    curr->height = 1 + max(getHeight(curr->left), getHeight(curr->right));
+    currRight->height = 1 + max(getHeight(currRight->left), getHeight(currRight->right));
+
+    return currRight;
+
+}
+
 Mahasiswa *insertAVL(Mahasiswa *curr, int age, char name[100]){
     // kosong
     if(curr == NULL){
@@ -59,7 +90,30 @@ Mahasiswa *insertAVL(Mahasiswa *curr, int age, char name[100]){
 
     // upfate height
     // curr->height = 1 + max(height(curr->left), height(curr->right));
+    curr->height = 1 + max(getHeight(curr->left), getHeight(curr->right));
 
+    // Identify imbalance case
+    if(getBalance(curr) > 1 && getBalance(curr->left) >= 0){ // LL
+        // LL
+        return rightRotate(curr);
+    }
+
+    // RR
+    else if(getBalance(curr) < -1 && getBalance(curr->right) <= 0){
+        return leftRotate(curr);
+    }
+
+    // LR
+    else if(getBalance(curr) > 1 && getBalance(curr->left) < 0){
+        curr->left = leftRotate(curr->left);
+        return rightRotate(curr);
+    }
+
+    // RL
+    else if(getBalance(curr) < -1 && getBalance(curr->right) > 0){
+        curr->right = rightRotate(curr->right);
+        return leftRotate(curr);
+    }
 }
 
 int main(){
