@@ -23,6 +23,26 @@ Mahasiswa *createNewMhs(int age, char name[100]){
     return newMhs;
 }
 
+int max(int a, int b){
+    return (a > b) ? a : b;
+}
+
+int getHeight(Mahasiswa *curr){
+    if(curr == NULL){
+        return 0;
+    } else{
+        return curr->height;
+    }
+}
+
+int getBalance(Mahasiswa *curr){
+    if(curr == NULL){
+        return 0;
+    } else{
+        return getHeight(curr->left) - getHeight(curr->right);
+    }
+}
+
 Mahasiswa *insertAVL(Mahasiswa *curr, int age, char name[100]){
     // kosong
     if(curr == NULL){
@@ -36,6 +56,10 @@ Mahasiswa *insertAVL(Mahasiswa *curr, int age, char name[100]){
     } else {
         return curr;
     }
+
+    // upfate height
+    // curr->height = 1 + max(height(curr->left), height(curr->right));
+
 }
 
 int main(){
