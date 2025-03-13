@@ -48,7 +48,7 @@ Mahasiswa *rightRotate(Mahasiswa *curr){
     Mahasiswa *currLeftRight = curr->left->right;
 
     // Rotate
-    currLeft->left->right = curr;
+    currLeft->right = curr;
     curr->left = currLeftRight;
 
     // Update height
@@ -88,35 +88,77 @@ Mahasiswa *insertAVL(Mahasiswa *curr, int age, char name[100]){
         return curr;
     }
 
-    // upfate height
-    // curr->height = 1 + max(height(curr->left), height(curr->right));
+    // update height
     curr->height = 1 + max(getHeight(curr->left), getHeight(curr->right));
 
     // Identify imbalance case
-    if(getBalance(curr) > 1 && getBalance(curr->left) >= 0){ // LL
-        // LL
+    int balance = getBalance(curr);
+
+    // LL
+    if(balance > 1 && age < curr->left->age){
         return rightRotate(curr);
     }
 
     // RR
-    else if(getBalance(curr) < -1 && getBalance(curr->right) <= 0){
+    if(balance < -1 && age > curr->right->age){
         return leftRotate(curr);
     }
 
     // LR
-    else if(getBalance(curr) > 1 && getBalance(curr->left) < 0){
+    if(balance > 1 && age > curr->left->age){
         curr->left = leftRotate(curr->left);
         return rightRotate(curr);
     }
 
     // RL
-    else if(getBalance(curr) < -1 && getBalance(curr->right) > 0){
+    if(balance < -1 && age < curr->right->age){
         curr->right = rightRotate(curr->right);
         return leftRotate(curr);
+    }
+
+    return curr;
+}
+
+void inOrder(Mahasiswa *curr){
+    if(curr == NULL){
+        return;
+    }
+    inOrder(curr->left);
+    printf("Age: %d, Name: %s\n", curr->age, curr->name);
+    inOrder(curr->right);
+}
+
+void updateTree(Mahasiswa *root, int age, char name[100]){
+    if(root == NULL){
+        printf("Data not found\n");
+        return;
+    }
+
+    else if(age < root->age){
+        updateTree(root->left, age, name);
+    } else if(age > root->age){
+        updateTree(root->right, age, name);
+    } else if (age == root->age){
+        strcpy(root->name, name);
+        printf("Data updated\n");
     }
 }
 
 int main(){
+    Mahasiswa *root = NULL;
 
+    root = insertAVL(root, 3, "cindy");
+    root = insertAVL(root, 18, "cindy");
+    root = insertAVL(root, 21, "cindy");
+    root = insertAVL(root, 8, "cindy");
+    root = insertAVL(root, 7, "cindy");
+    root = insertAVL(root, 6, "cindy");
+    root = insertAVL(root, 23, "cindy");
+
+    inOrder(root);
+
+    updateTree(root, 21, "jovita");
+    printf("============\n");
+    inOrder(root);
     return 0;
 }
