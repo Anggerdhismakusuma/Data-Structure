@@ -144,7 +144,7 @@ node *deleteNode(node *root, int val){
         root->right = rightRotate(root->right);
         return leftRotate(root);
     }
-    
+
     return root;
 }
 
@@ -154,9 +154,18 @@ int main(){
     root = insert(root, 10);
     root = insert(root, 15);
     root = insert(root, 20);
+    root = insert(root, 25);
 
     inOrder(root);
 
+    printf("\n");
+
+    printf("Root: %d\n", root->val);
+
+    root = deleteNode(root, 15);
+
+    inOrder(root);
+    
     printf("\n");
 
     printf("Root: %d\n", root->val);
