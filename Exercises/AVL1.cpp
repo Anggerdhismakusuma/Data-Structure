@@ -93,6 +93,25 @@ node *insert(node *root, int val){
     return root;
 }
 
+void inOrder(node *root){
+    if(root){
+        inOrder(root->left);
+        printf("%d ", root->val);
+        inOrder(root->right);
+    }
+}
+
 int main(){
+    node *root = NULL;
+
+    root = insert(root, 10);
+    root = insert(root, 15);
+    root = insert(root, 20);
+
+    inOrder(root);
+
+    printf("\n");
+
+    printf("Root: %d\n", root->val);
     return 0;
 }
