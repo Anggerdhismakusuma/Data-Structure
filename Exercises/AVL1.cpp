@@ -127,19 +127,23 @@ node *deleteNode(node *root, int val){
     root->height = max(height(root->left), height(root->right)) + 1;
     int balance = getBalance(root);
     
+    //Kiri lebih dari kanan
     if(balance > 1 && getBalance(root->left) >= 0){
         return rightRotate(root);
     }
 
+    // Kiri lebih tinggi tapi lebih berat di kanan
     if(balance > 1 && getBalance(root->left) < 0){
         root->left = leftRotate(root->left);
         return rightRotate(root);
     }
 
+    // Kanan lebih dari kiri
     if(balance < -1 && getBalance(root->right) <= 0){
         return leftRotate(root);
     }
 
+    // Kanan lebih tinggi tapi lebih berat di kiri
     if(balance < -1 && getBalance(root->right) > 0){
         root->right = rightRotate(root->right);
         return leftRotate(root);
@@ -151,10 +155,13 @@ node *deleteNode(node *root, int val){
 int main(){
     node *root = NULL;
 
-    root = insert(root, 10);
-    root = insert(root, 15);
+    root = insert(root, 50);
+    root = insert(root, 30);
+    root = insert(root, 80);
+    root = insert(root, 90);
+    root = insert(root, 38);
     root = insert(root, 20);
-    root = insert(root, 25);
+    root = insert(root, 93);
 
     inOrder(root);
 
@@ -162,7 +169,9 @@ int main(){
 
     printf("Root: %d\n", root->val);
 
-    root = deleteNode(root, 15);
+    root = deleteNode(root, 30);
+    root = deleteNode(root, 90);
+    root = deleteNode(root, 93);
 
     inOrder(root);
     
