@@ -101,6 +101,53 @@ void inOrder(node *root){
     }
 }
 
+node *deleteNode(node *root, int val){
+    if(!root) return root;
+    if(val < root->val) root->left = deleteNode(root->left, val);
+    else if(val > root->val) root->right = deleteNode(root->right, val);
+    else{
+        if(!root->left || !root->right){
+            node *temp = root->left ? root->left : root->right;
+            if(!temp){
+                temp = root;
+                root = NULL;
+            }else{
+                *root = *temp;
+            }
+            free(temp);
+        }else{
+            node *temp = root->right;
+            while(temp->left) temp = temp->left;
+            root->val = temp->val;
+            root->right = deleteNode(root->right, temp->val);
+        }
+    }
+
+    if(!root) return root;
+    root->height = max(height(root->left), height(root->right)) + 1;
+    int balance = getBalance(root);
+    
+    if(balance > 1 && getBalance(root->left) >= 0){
+        return rightRotate(root);
+    }
+
+    if(balance > 1 && getBalance(root->left) < 0){
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+
+    if(balance < -1 && getBalance(root->right) <= 0){
+        return leftRotate(root);
+    }
+
+    if(balance < -1 && getBalance(root->right) > 0){
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+    
+    return root;
+}
+
 int main(){
     node *root = NULL;
 
