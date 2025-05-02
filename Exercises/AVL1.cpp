@@ -61,7 +61,6 @@ node *insert(node *root, int val){
     else return root;
 
     root->height = max(height(root->left), height(root->right)) + 1;
-    
     int balance = getBalance(root);
 
     if(balance < -1 && val > root->right->val){
